@@ -54,3 +54,27 @@ docker run -d --platform linux/amd64 --name cicd-site -p 8080:80 malakhovtsev/ce
 
 ![other page in the browser](images/other-page-in-browser.png)
 > Second required page also loads with CSS applied
+
+# Part 2 - GitHub Actions and DockerHub
+
+### Repository secrets
+
+#### To create new PAT:
+1. Click on the profile icon in the top right
+2. Click `Account settings`
+3. On the left sidebar click `Personal access tokens`
+4. Click `Generate new token`
+5. Enter **name**, expiration date I set as 90 days since it is a course repository (so it does expire at some point)
+6. Repository permissions: `Repo Read & Write` for needed access.
+
+#### To setup repository secrets:
+1. On the repository on GitHub click `Settings` on the top panel.
+2. In `Secrets and variables` section click `Actions`.
+3. Click `New repository secret`.
+4. Enter according name and enter/paste the secret.
+
+![docker secrets in github secrets](images/repo-secrets.png)
+> Secrets visible no the secrets page on GitHub repository settings
+
+- `DOCKER_TOKEN` is for personal access token allowing to login to DockerHub.
+- `DOCKER_USERNAME` is the username of Docker account to know who to connect from to DockerHub.
