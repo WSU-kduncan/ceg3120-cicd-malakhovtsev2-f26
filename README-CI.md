@@ -146,3 +146,12 @@ docker run -d --platform linux/amd64 --name cicd-site -p 8080:80 malakhovtsev/ce
 
 ![browser showing updated text after CI job](images/browser-showing-updated-text-after-CI-job.png)
 > Container from updated pulled image has the updated content, as visible with updated text in the browser, confirming the image is updated by CI workflow
+
+# Part 3 - Semantic Versioning
+
+![summary tag triggered workflow](images/summary-tag-triggered-workflow.png)
+
+![tag on dockerhub](images/tag-on-dockerhub.png)
+
+![git tag -l input](images/git-tag-terminal-input.png)
+![git tag -l output](images/git-tag-terminal-output.png)
