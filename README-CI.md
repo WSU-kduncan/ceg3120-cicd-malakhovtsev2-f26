@@ -79,8 +79,53 @@ docker run -d --platform linux/amd64 --name cicd-site -p 8080:80 malakhovtsev/ce
 - `DOCKER_TOKEN` is for personal access token allowing to login to DockerHub.
 - `DOCKER_USERNAME` is the username of Docker account to know who to connect from to DockerHub.
 
+### Workflow Trigger
+Workflow runs only when commit is pushed to `main` branch:
+
+```yaml
+on:
+  push:
+    branches:
+        - main
+```
+
+### Workflow Steps
+Workflow runs `build` job:
+1. Sign in DockerHub: `docker/login-action@v4`
+2. Logs into DockerHub with `DOCKER_USERNAME` and `DOCKER_TOKEN` GitHub repository secrets.
+3. Builds and pushes Docker image: `docker/push-action@v7` builds the image from the repository's Dockerfile and pushes it to DockerHub as hardcoded `malakhovtsev/ceg3120-cicd:latest`.
+
+### Setup: Values to Change for Another Repository
+[Part 2 workflow file (permalink)](https://github.com/WSU-kduncan/ceg3120-cicd-malakhovtsev2-f26/blob/a4794af35cad3ed2dc9733249e3d808c24b615d6/.github/workflows/docker-build.yml)
+
+#### In the workflow file
+- change hardcoded `tags: malakhovtsev/ceg3120-cicd:latest` to own `<dockerhub-username>/<repository>:<tag>`.
+- if repository has different main/CI branch, change `branches: - main` to a branch name accordingly
+- Secrets: `secrets.DOCKER_USERNAME` and `secrets.DOCKER_TOKEN` can be changed if repository has different secrets name.
+
+#### In the repository
+- Create secrets `DOCKER_USERNAME` and `DOCKER_TOKEN` with own DockerHub username and PAT.
+- Create DockerHub repository for the Docker image.
+- Create/keep workflow file in `.github/workflows/` for GitHub.
+
+### Testing & Validating
+#### Testing that workflow does its job:
+1. Push any commit to `main` branch
+2. Open **Actions** tab on the repository on GitHub. Run for that commit should have a green checkmark.
+3. On DockerHub, the `latest` tag should have the latest push time recent accordingly to the push time.
+
+#### Testing that Docker image works
+DockerHub repository: https://hub.docker.com/repository/docker/malakhovtsev/ceg3120-cicd
+```bash
+docker pull --platform linux/amd64 malakhovtsev/ceg3120-cicd:latest
+docker run -d --platform linux/amd64 --name cicd-site -p 8080:80 malakhovtsev/ceg3120-cicd:latest
+```
+
+### Main trigger
 ![successful CI job](images/successful-ci-job.png)
 > Workflow run trigger by a push to `main` that is completed successfully.
+
+### Branch negative test
 
 ![main last commit before branch negative test](images/ci-job-last-commit-main.png)
 > Latest commit on `main` branch has green check showing the CI job is working
@@ -90,6 +135,8 @@ docker run -d --platform linux/amd64 --name cicd-site -p 8080:80 malakhovtsev/ce
 
 ![no workflow started on another branch](images/no-workflow-started-another-branch.png)
 > No workflow started on `test-branch` as required
+
+### Change to Docker image
 
 ![CI job with updated text](images/ci-job-with-updated-text.png)
 > Updated text in the web-content and committed and pushed to `main`, confirmed with green check on a commit
