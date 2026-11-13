@@ -2,13 +2,22 @@ name: Build and push Docker image
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*.*.*'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Generate Docker metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: malakhovtsev/ceg3120-cicd
+          tags: |
+            type=semver,pattern={{major}}
+            type=semver,pattern={{major}}.{{minor}}
+
       - name: Sign in to Docker Hub
         uses: docker/login-action@v4
         with:
@@ -22,5 +31,6 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           push: true
-          tags: malakhovtsev/ceg3120-cicd:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           
