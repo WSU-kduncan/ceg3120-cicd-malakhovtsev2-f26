@@ -78,3 +78,5 @@ docker run -d --platform linux/amd64 --name cicd-site -p 8080:80 malakhovtsev/ce
 
 - `DOCKER_TOKEN` is for personal access token allowing to login to DockerHub.
 - `DOCKER_USERNAME` is the username of Docker account to know who to connect from to DockerHub.
+
+![successful CI job](images/sucessful-ci-job.png)
