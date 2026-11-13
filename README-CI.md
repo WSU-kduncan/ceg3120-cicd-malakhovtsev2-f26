@@ -155,3 +155,6 @@ docker run -d --platform linux/amd64 --name cicd-site -p 8080:80 malakhovtsev/ce
 
 ![git tag -l input](images/git-tag-terminal-input.png)
 ![git tag -l output](images/git-tag-terminal-output.png)
+
+![tag negative commit](images/tag-negative-commit.png)
+> Tag negative commit. As visible, the commit to `main` after previous tagged one did not trigger the workflow
