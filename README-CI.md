@@ -80,3 +80,9 @@ docker run -d --platform linux/amd64 --name cicd-site -p 8080:80 malakhovtsev/ce
 - `DOCKER_USERNAME` is the username of Docker account to know who to connect from to DockerHub.
 
 ![successful CI job](images/sucessful-ci-job.png)
+
+![main last commit before branch negative test](images/ci-job-last-commit-main.png)
+
+![no ci job on non main branch commit](images/no-ci-job-test-branch.png)
+
+![no workflow started on another branch](images/no-workflow-started-another-branch.png)
