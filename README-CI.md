@@ -158,3 +158,12 @@ docker run -d --platform linux/amd64 --name cicd-site -p 8080:80 malakhovtsev/ce
 
 ![tag negative commit](images/tag-negative-commit.png)
 > Tag negative commit. As visible, the commit to `main` after previous tagged one did not trigger the workflow
+
+![dockerhub releases information](images/dockerhub-releases-information.png)
+> After releasing `v1.1.0`, `latest`, `1` and `1.1` point to the new image `7267d8c203b3`, while `1.0` still points to the original image `d93b2fb0a513`.
+
+![docker ps of different tags](images/docker-ps-of-different-tags.png)
+
+![website from 1.0 tag image](images/website-from-10-tag-image.png)
+
+![website from 1.1 tag image](images/website-from-11-tag-image.png)
