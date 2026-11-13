@@ -79,10 +79,23 @@ docker run -d --platform linux/amd64 --name cicd-site -p 8080:80 malakhovtsev/ce
 - `DOCKER_TOKEN` is for personal access token allowing to login to DockerHub.
 - `DOCKER_USERNAME` is the username of Docker account to know who to connect from to DockerHub.
 
-![successful CI job](images/sucessful-ci-job.png)
+![successful CI job](images/successful-ci-job.png)
+> Workflow run trigger by a push to `main` that is completed successfully.
 
 ![main last commit before branch negative test](images/ci-job-last-commit-main.png)
+> Latest commit on `main` branch has green check showing the CI job is working
 
 ![no ci job on non main branch commit](images/no-ci-job-test-branch.png)
+> No green checkmark on a `test-branch` on a commit confirms the CI job only runs on `main` branch
 
 ![no workflow started on another branch](images/no-workflow-started-another-branch.png)
+> No workflow started on `test-branch` as required
+
+![CI job with updated text](images/ci-job-with-updated-text.png)
+> Updated text in the web-content and committed and pushed to `main`, confirmed with green check on a commit
+
+![terminal showing docker pull after CI job](images/terminal-showing-docker-pull-after-CI-job.png)
+> After removing old image, `docker pull` shows that it downloaded newer image confirming workflow pushed updated image to DockerHub
+
+![browser showing updated text after CI job](images/browser-showing-updated-text-after-CI-job.png)
+> Container from updated pulled image has the updated content, as visible with updated text in the browser, confirming the image is updated by CI workflow
