@@ -48,6 +48,15 @@ flowchart LR
     J -- push image --> K
     K -- pull --> P
 ```
+> Diagram shows the CI process from a code change to a new image on DockerHub:<br><br>
+> **Local:** changes to `web-content` or `Dockerfile` are committed and pushed to main, to create a release a tag in `'v*.*.*'` format is created and pushed.<br><br>
+> **GitHub:** push only with tag of the format `'v*.*.*'` starts the workflow, logs into DockerHub using repository secrets and build Docker image from `Dockerfile`<br><br>
+> **DockerHub:** image is pushed to `malakhovtsev/ceg3120-cicd` with `latest`, `major` and `major.minor` tags.
+
+### What is not working
+Everything in the project works as intended
+
+# Part 1 - Docker container image
 
 ### Website Content
 
