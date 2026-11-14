@@ -309,3 +309,13 @@ Then opening each `localhost` with according ports will show different tags/vers
 
 # Resources
 
+- [Docker Docs: GitHub Actions](https://docs.docker.com/build/ci/github-actions/): base example for the Part 2 workflow, changed the secret names and image tag
+- [Docker Docs: Manage tags and labels](https://docs.docker.com/build/ci/github-actions/manage-tags-labels/): passing metadata-action output to build-push-action
+- [Docker Docs: Access tokens](https://docs.docker.com/security/for-developers/access-tokens/): creating the DockerHub PAT
+- [docker/build-push-action](https://github.com/docker/build-push-action): inputs for building and pushing the image, latest version (v7)
+- [docker/login-action](https://github.com/docker/login-action): logging in to DockerHub with repository secrets (v4)
+- [docker/setup-buildx-action](https://github.com/docker/setup-buildx-action): setting up the image builder (v4)
+- [docker/metadata-action](https://github.com/docker/metadata-action): semver tag patterns and the automatic latest tag (v6)
+- [Semantic Versioning](https://semver.org/): versioning standard, like choosing version numbers (`v1.0.0` to v1.1.0 for a new feature)
+- [httpd Docker image](https://hub.docker.com/_/httpd): base image and default htdocs path
+- [Mermaid flowchart syntax](https://mermaid.js.org/syntax/flowchart.html): building the project diagram
