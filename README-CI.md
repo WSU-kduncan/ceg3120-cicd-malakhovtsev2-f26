@@ -1,4 +1,21 @@
-# Part 1 - Docker container image
+# Project 6 - Continuous Integration
+
+## Project Overview
+This is a continuous integration project that explains how to setup a GitHub workflow that is going to automate building and pushing containerized website. When version tag is pushed to GitHub, it triggers the workflow build to create a Docker image and push it to DockerHub with version tags. Every release is saved, so older versions can be restored to.
+
+### Tools and their roles
+| Tool | Role |
+|------|------|
+| Git | Version control system |
+| GitHub | Git repositories platform |
+| GitHub Actions | Runs workflow that builds and pushes Docker image when version tag is pushed |
+| Docker | Builds and runs containers |
+| `httpd:2.4` | Apache web server image that serves the website |
+| DockerHub | Platform storing Docker images |
+| `docker/metadata-action` | Turns git tag into image tags |
+| Mermaid | Language for README diagram |
+
+### Diagram
 
 ```mermaid
 flowchart LR
