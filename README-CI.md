@@ -1,5 +1,37 @@
 # Part 1 - Docker container image
 
+```mermaid
+flowchart LR
+    subgraph Local["Local machine (cloned repository)"]
+        direction TB
+        A["Edit web-content / Dockerfile"] --> B["git commit + git push origin main"]
+        B --> C["git tag -a vX.Y.Z"]
+        C --> D["git push origin vX.Y.Z"]
+        P["docker pull / docker run<br/>any version tag"]
+    end
+
+    subgraph GitHub["GitHub"]
+        direction TB
+        E{"Pushed ref is a<br/>v*.*.* tag?"}
+        E -- "no (plain commit)" --> N["No workflow run"]
+        E -- yes --> F["GitHub Actions workflow starts"]
+        F --> G["metadata-action<br/>generates latest, X, X.Y"]
+        G --> H["login-action<br/>DOCKER_USERNAME + DOCKER_TOKEN secrets"]
+        H --> I["setup-buildx-action"]
+        I --> J["build-push-action<br/>builds image from Dockerfile"]
+    end
+
+    subgraph DockerHub["DockerHub"]
+        direction TB
+        K["malakhovtsev/ceg3120-cicd<br/>tags: latest, X, X.Y<br/>older X.Y tags kept"]
+    end
+
+    B --> E
+    D --> E
+    J -- push image --> K
+    K -- pull --> P
+```
+
 ### Website Content
 
 Small static website with a home page to fill the requirements
