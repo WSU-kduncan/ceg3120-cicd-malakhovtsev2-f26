@@ -80,7 +80,7 @@ From the root folder:
 docker build --platform linux/amd64 -t malakhovtsev/ceg3120-cicd:latest .
 ```
 
-- `-t` -tags the image
+- `-t` tags the image. To push to DockerHub the tag has to be `<dockerhub-username>/<repository>:<tag>` or DockerHub will reject it
 - `--platform linux/amd64` is needed to build for x86 servers on AWS (since my machine is ARM MacBook its incompatible by default)
 
 Login with Personal Access Token (PAT) that can be created in settings on Docker Hub.
@@ -102,13 +102,13 @@ docker run -d --platform linux/amd64 --name cicd-site -p 8080:80 malakhovtsev/ce
 
 - `-d` runs container in the background
 - `-p 8080:80` maps port 8080 on local computer to port 80 in the container (where Apache listens)
-- `--platform linux/amd64` is needed to build for x86 servers on AWS (since my machine is ARM MacBook its incompatible by default)
+- `--platform linux/amd64` the image is built for x86 computers, flag is needed to work on ARM
 
 ![docker ps output](images/docker-ps.png)
 > `docker ps` shows the `cicd-site` container running from the DockerHub image with port 8080 mapped to 80
 
 ![home page in the browser](images/home-page-in-browser.png)
-> Home page is served my the container on the port 8080, as seen in the browser, with stylesheets applied
+> Home page is served by the container on the port 8080, as seen in the browser, with stylesheets applied
 
 ![other page in the browser](images/other-page-in-browser.png)
 > Second required page also loads with CSS applied
@@ -123,7 +123,7 @@ docker run -d --platform linux/amd64 --name cicd-site -p 8080:80 malakhovtsev/ce
 3. On the left sidebar click `Personal access tokens`
 4. Click `Generate new token`
 5. Enter **name**, expiration date I set as 90 days since it is a course repository (so it does expire at some point)
-6. Repository permissions: `Repo Read & Write` for needed access.
+6. Repository permissions: `Repo Read & Write` for minimum needed access, `Delete` not needed 
 
 #### To setup repository secrets:
 1. On the repository on GitHub click `Settings` on the top panel.
@@ -132,7 +132,7 @@ docker run -d --platform linux/amd64 --name cicd-site -p 8080:80 malakhovtsev/ce
 4. Enter according name and enter/paste the secret.
 
 ![docker secrets in github secrets](images/repo-secrets.png)
-> Secrets visible no the secrets page on GitHub repository settings
+> Secrets visible on the secrets page on GitHub repository settings
 
 - `DOCKER_TOKEN` is for personal access token allowing to login to DockerHub.
 - `DOCKER_USERNAME` is the username of Docker account to know who to connect from to DockerHub.
@@ -144,20 +144,20 @@ Workflow runs only when commit is pushed to `main` branch:
 on:
   push:
     branches:
-        - main
+      - main
 ```
 
 ### Workflow Steps
 Workflow runs `build` job:
-1. Sign in DockerHub: `docker/login-action@v4`
-2. Logs into DockerHub with `DOCKER_USERNAME` and `DOCKER_TOKEN` GitHub repository secrets.
-3. Builds and pushes Docker image: `docker/push-action@v7` builds the image from the repository's Dockerfile and pushes it to DockerHub as hardcoded `malakhovtsev/ceg3120-cicd:latest`.
+1. Sign in DockerHub: `docker/login-action@v4`, log into DockerHub with `DOCKER_USERNAME` and `DOCKER_TOKEN` GitHub repository secrets.
+2. Set up Docker Buildx: `docker/setup-buildx-action@v4` sets up the builder.
+3. Builds and pushes Docker image: `docker/build-push-action@v7` builds the image from the repository's Dockerfile and pushes it to DockerHub as hardcoded `malakhovtsev/ceg3120-cicd:latest`.
 
 ### Setup: Values to Change for Another Repository
 [Part 2 workflow file (permalink)](https://github.com/WSU-kduncan/ceg3120-cicd-malakhovtsev2-f26/blob/a4794af35cad3ed2dc9733249e3d808c24b615d6/.github/workflows/docker-build.yml)
 
 #### In the workflow file
-- change hardcoded `images: malakhovtsev/ceg3120-cicd` to own `<dockerhub-username>/<repository>`.
+- change hardcoded `tags: malakhovtsev/ceg3120-cicd:latest` to own `<dockerhub-username>/<repository>:<tag>`.
 - if repository has different main/CI branch, change `branches: - main` to a branch name accordingly
 - Secrets: `secrets.DOCKER_USERNAME` and `secrets.DOCKER_TOKEN` can be changed if repository has different secrets name.
 
@@ -173,17 +173,18 @@ Workflow runs `build` job:
 3. On DockerHub, the `latest` tag should have the latest push time recent accordingly to the push time.
 
 #### Testing that Docker image works
-DockerHub repository: https://hub.docker.com/repository/docker/malakhovtsev/ceg3120-cicd
+DockerHub repository: https://hub.docker.com/r/malakhovtsev/ceg3120-cicd
 ```bash
 docker pull --platform linux/amd64 malakhovtsev/ceg3120-cicd:latest
 docker run -d --platform linux/amd64 --name cicd-site -p 8080:80 malakhovtsev/ceg3120-cicd:latest
 ```
+Then open `localhost:8080` in a browser, website should be updated with changes
 
-### Main trigger
+#### Main trigger
 ![successful CI job](images/successful-ci-job.png)
-> Workflow run trigger by a push to `main` that is completed successfully.
+> Workflow run trigger by a push to `main` (commit `a4794af`) that is completed successfully.
 
-### Branch negative test
+#### Branch negative test
 
 ![main last commit before branch negative test](images/ci-job-last-commit-main.png)
 > Latest commit on `main` branch has green check showing the CI job is working
@@ -194,7 +195,7 @@ docker run -d --platform linux/amd64 --name cicd-site -p 8080:80 malakhovtsev/ce
 ![no workflow started on another branch](images/no-workflow-started-another-branch.png)
 > No workflow started on `test-branch` as required
 
-### Change to Docker image
+#### Change to Docker image
 
 ![CI job with updated text](images/ci-job-with-updated-text.png)
 > Updated text in the web-content and committed and pushed to `main`, confirmed with green check on a commit
@@ -214,7 +215,7 @@ Tags are going to be used instead of overwriting `latest` on every push, images 
 git tag -l
 ```
 
-#### Create and annotated tag on the latest commit:
+#### Create an annotated tag on the latest commit:
 ```bash
 git tag -a v1.1.0 -m "Second release: version label on home page"
 ```
@@ -241,7 +242,7 @@ on:
     - `type=semver,pattern={{major}}.{{minor}}` -> `1.1`
     - `latest` is added automatically for tag pushes
 2. **Sign in to DockerHub**: `docker/login-action@v4` logs in with the `DOCKER_USERNAME` and `DOCKER_TOKEN` repository secrets.
-3. **Set up Docker Buildx**: `docker/setup-buildx-action@v4` setups up the builder
+3. **Set up Docker Buildx**: `docker/setup-buildx-action@v4` sets up the builder
 4. **Build and push Docker image**: `docker/build-push-action@v7` builds the image and pushes it with all the tags generated in step 1.
 
 For a `v1.1.0` Docker receives `latest`, `1` and `1.1`.
@@ -251,7 +252,7 @@ For a `v1.1.0` Docker receives `latest`, `1` and `1.1`.
 ### Setup: Values to change for another repository
 
 #### In the workflow file
-- change hardcoded `tags: malakhovtsev/ceg3120-cicd:latest` to own `<dockerhub-username>/<repository>:<tag>`.
+- change hardcoded `images: malakhovtsev/ceg3120-cicd` to own `<dockerhub-username>/<repository>`.
 - Secrets: `secrets.DOCKER_USERNAME` and `secrets.DOCKER_TOKEN` can be changed if repository has different secrets name.
 - Tags: `tags: 'v*.*.*'` if using different format
 
@@ -274,7 +275,7 @@ DockerHub repository tags: https://hub.docker.com/r/malakhovtsev/ceg3120-cicd/ta
 docker run -d --platform linux/amd64 --name site1.0 -p 8080:80 malakhovtsev/ceg3120-cicd:1.0
 docker run -d --platform linux/amd64 --name site1.1 -p 8081:80 malakhovtsev/ceg3120-cicd:1.1
 ```
-Then opening each `localhost` with according ports will shows different tags/versions of the image.
+Then opening each `localhost` with according ports will show different tags/versions of the image.
 
 #### Tag trigger
 ![git tag -l input](images/git-tag-terminal-input.png)
@@ -295,7 +296,6 @@ Then opening each `localhost` with according ports will shows different tags/ver
 #### Two releases
 ![dockerhub releases information](images/dockerhub-releases-information.png)
 > After releasing `v1.1.0`, `latest`, `1` and `1.1` point to the new image `7267d8c203b3`, while `1.0` still points to the original image `d93b2fb0a513`.
->
 
 #### Rollback
 ![docker ps of different tags](images/docker-ps-of-different-tags.png)
@@ -306,3 +306,6 @@ Then opening each `localhost` with according ports will shows different tags/ver
 
 ![website from 1.1 tag image](images/website-from-11-tag-image.png)
 > `1.1` shows updated heading of second release
+
+# Resources
+
